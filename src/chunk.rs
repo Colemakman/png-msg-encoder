@@ -3,11 +3,12 @@ use std::convert::TryFrom;
 use std::fmt;
 use crate::Error;
 use crate::chunk_type::ChunkType;
-use std::array::TryFromSliceError;
+// use std::array::TryFromSliceError;
 
 
 const CRC: Crc<u32> = crc::Crc::<u32>::new(&crc::CRC_32_ISO_HDLC);
 
+#[derive(Debug)]
 pub struct Chunk {
     
     length: u32,
@@ -19,7 +20,7 @@ pub struct Chunk {
 
 impl Chunk {
 
-    fn new(chunk_type: ChunkType, data: Vec<u8>) -> Self {
+    pub fn new(chunk_type: ChunkType, data: Vec<u8>) -> Self {
         Chunk {
             length: data.len() as u32,
             crc: CRC.checksum(&chunk_type.bytes().iter().cloned()
@@ -30,27 +31,27 @@ impl Chunk {
         }
     }
 
-    fn length(&self) -> u32 {
+    pub fn length(&self) -> u32 {
         self.length
     }
 
-    fn chunk_type(&self) -> &ChunkType {
+    pub fn chunk_type(&self) -> &ChunkType {
         &self.chunk_type
     }
 
-    fn data(&self) -> &[u8] {
+    pub fn data(&self) -> &[u8] {
         &self.data
     }
 
-    fn crc(&self) -> u32 {
+    pub fn crc(&self) -> u32 {
         self.crc
     }
 
-    fn data_as_string(&self) -> Result<String, Error> {
+    pub fn data_as_string(&self) -> Result<String, Error> {
         Ok(String::from_utf8(self.data().to_vec())?)
     }
 
-    fn as_bytes(&self) -> Vec<u8> {
+    pub fn as_bytes(&self) -> Vec<u8> {
         self.length().to_be_bytes().iter().cloned()
             .chain(self.chunk_type().bytes().iter().cloned())
             .chain(self.data().iter().cloned())

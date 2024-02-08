@@ -74,7 +74,7 @@ impl TryFrom<[u8; 4]> for ChunkType {
 
     fn try_from(value: [u8; 4]) -> Result<Self, Self::Error> {
         if value.iter().any(|byte| !byte.is_ascii_alphabetic()) {
-            return Err("Value is not valid ascii alphabet".into());
+            return Err("Value is not valid ascii alphabet");
         } 
         Ok(ChunkType { bytes: value })
     }
@@ -89,10 +89,6 @@ impl Display for ChunkType {
                 )
         }
 }
-
-//fn main() {
-//    println!("Hello world");
-//}
 
 
 #[cfg(test)]
