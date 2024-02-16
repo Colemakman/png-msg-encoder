@@ -18,14 +18,14 @@ pub struct Png {
 impl Png {
     const STANDARD_HEADER: [u8; 8] = [137, 80, 78, 71, 13, 10, 26, 10];
 
-    fn from_chunks(chunks: Vec<Chunk>) -> Png {
+    pub fn from_chunks(chunks: Vec<Chunk>) -> Png {
         Png {
             header: Png::STANDARD_HEADER,
             chunks
         }
     }
 
-    fn from_file<P: AsRef<Path>>(path: P) -> Result<Png> {
+    pub fn from_file<P: AsRef<Path>>(path: P) -> Result<Png> {
        let f = File::open(path)?;
        let mut reader = BufReader::new(f);
        let mut byte_read = Vec::new();
@@ -35,11 +35,11 @@ impl Png {
        Png::try_from(png_bytes)   
     }
 
-    fn append_chunk(&mut self, chunk: Chunk) {
+    pub fn append_chunk(&mut self, chunk: Chunk) {
         self.chunks.push(chunk);
     }
 
-    fn remove_chunk(&mut self, chunk_type: &str) -> Result<Chunk> {
+    pub fn remove_chunk(&mut self, chunk_type: &str) -> Result<Chunk> {
         for (index, chunk) in self.chunks.iter().enumerate() {
             if chunk.chunk_type().to_string() == chunk_type {
                 return Ok(self.chunks.remove(index));
@@ -48,15 +48,15 @@ impl Png {
         Err("Chunk not in PNG".into())
     }
 
-    fn header(&self) -> &[u8; 8] {
+    pub fn header(&self) -> &[u8; 8] {
         &Png::STANDARD_HEADER
     }
 
-    fn chunks(&self) -> &[Chunk] {
+    pub fn chunks(&self) -> &[Chunk] {
         &self.chunks
     }
 
-    fn chunk_by_type(&self, chunk_type: &str) -> Option<&Chunk> {
+    pub fn chunk_by_type(&self, chunk_type: &str) -> Option<&Chunk> {
         let chunk = ChunkType::from_str(chunk_type).ok()?;
         let chunk_type_bytes = chunk.bytes();
 
@@ -68,11 +68,11 @@ impl Png {
         None
     }
 
-    fn find_pattern_index(bytes: &[u8], c_type: &[u8; 4]) -> Option<usize> {
+    pub fn find_pattern_index(bytes: &[u8], c_type: &[u8; 4]) -> Option<usize> {
         bytes.windows(4).position(|window| window == c_type)
     }
     
-    fn as_bytes(&self) -> Vec<u8> {
+    pub fn as_bytes(&self) -> Vec<u8> {
        let mut bytes = Vec::new();
        bytes.extend_from_slice(self.header());
        
